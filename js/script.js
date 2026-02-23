@@ -24,22 +24,31 @@ const ShowWeatherData = async (city) => {
     const data = await getWeatherData(city);
 
     // unsplash - mudança de background
-    try {
-        const photoRes = await fetch(`https://api.unsplash.com/search/photos?query=${city}&client_id=${UNSPLASH_KEY}`);
-        const photoData = await photoRes.json();
+ if (!data || data.cod === "404") {
+    // Mostra sua mensagem de "cidade não encontrada"
+    document.body.style.backgroundImage = "";
+    return; // Para aqui, não busca foto
+}
 
-        if (photoData.results.length > 0) {
-            const photoURL = photoData.results[0].urls.regular;
-            document.body.style.backgroundImage = `url(${photoURL})`;
-            document.body.style.backgroundSize = "cover";
-            document.body.style.backgroundPosition = "center";
-        } else {
-            document.body.style.backgroundImage = "";
-        }
-    } catch (error) {
+// Só chega aqui se a cidade foi encontrada
+try {
+    const country = data.sys.country; // Ex: "GN" para Guiné, "FR" para França
+    const photoRes = await fetch(
+        `https://api.unsplash.com/search/photos?query=${city}+${country}+city+landscape&client_id=${UNSPLASH_KEY}`
+    );
+    const photoData = await photoRes.json();
+
+    if (photoData.results.length > 0) {
+        const photoURL = photoData.results[0].urls.regular;
+        document.body.style.backgroundImage = `url(${photoURL})`;
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundPosition = "center";
+    } else {
         document.body.style.backgroundImage = "";
     }
-
+} catch (error) {
+    document.body.style.backgroundImage = "";
+}
     // clima
     cityElement.innerText = data.name;
   TempElement.innerText = parseInt(data.main.temp) + "°C";
