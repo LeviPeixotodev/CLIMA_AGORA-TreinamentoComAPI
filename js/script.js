@@ -25,14 +25,13 @@ const ShowWeatherData = async (city) => {
 
     // unsplash - mudança de background
  if (!data || data.cod === "404") {
-    // Mostra sua mensagem de "cidade não encontrada"
     document.body.style.backgroundImage = "";
-    return; // Para aqui, não busca foto
+    return; 
 }
 
-// Só chega aqui se a cidade foi encontrada
+
 try {
-    const country = data.sys.country; // Ex: "GN" para Guiné, "FR" para França
+    const country = data.sys.country; 
     const photoRes = await fetch(
         `https://api.unsplash.com/search/photos?query=${city}+${country}+city+landscape&client_id=${UNSPLASH_KEY}`
     );
